@@ -15,9 +15,6 @@ vim.opt.rtp:prepend(lazypath)
 -- Plugin setup
 require("lazy").setup("plugins")
 
--- TODO: Figure out why this doesn't work
-require('nvterm').setup()
-
 require('mason').setup()
 require('mason-lspconfig').setup({
   automatic_installation = true,

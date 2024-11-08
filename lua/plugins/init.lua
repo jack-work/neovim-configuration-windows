@@ -4,10 +4,6 @@ return {
   { 'williamboman/mason-lspconfig.nvim' },
   { 'neovim/nvim-lspconfig' },
   {
-    'jackelliher/nvterm',
-    dir = 'D:/Source/nvterm'
-  },
-  {
     'hrsh7th/nvim-cmp',
     'hrsh7th/cmp-nvim-lsp',
     'hrsh7th/cmp-buffer',
