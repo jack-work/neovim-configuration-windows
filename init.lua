@@ -139,9 +139,16 @@ vim.keymap.set({ 'n', 'v' }, '<leader>.', vim.lsp.buf.code_action)
 
 vim.wo.number = true
 vim.wo.relativenumber = true
+vim.wo.wrap = false
+vim.api.nvim_create_autocmd("FileType", {
+    pattern = "markdown",
+    callback = function()
+        vim.opt_local.wrap = true
+        vim.opt_local.linebreak = true
+    end,
+})
 vim.o.shell = "pwsh.exe"
 
--- In your init.lua
 vim.opt.tabstop = 2     -- Width of tab character
 vim.opt.softtabstop = 2 -- Fine tunes amount of whitespace
 vim.opt.shiftwidth = 2  -- Width of indentation
@@ -150,30 +157,10 @@ vim.opt.expandtab = true -- Convert tabs to spaces
 vim.opt.smartcase = true
 vim.opt.ignorecase = true
 
--- Set a distinct background color for inactive windows
--- vim.api.nvim_set_hl(0, 'NormalNC', { bg = '#232323' })
+vim.keymap.set('n', '<leader>ep', ':Ex $LOCALAPPDATA/nvim/lua/plugins<CR>')
+vim.g.netrw_bufsettings = 'noma nomod nu nowrap ro nobl'
+vim.keymap.set('n', '<M-k>', ':resize +2<CR>')
+vim.keymap.set('n', '<M-j>', ':resize -2<CR>')
+vim.keymap.set('n', '<M-h>', ':vertical resize -2<CR>')
+vim.keymap.set('n', '<M-l>', ':vertical resize +2<CR>')
 
--- Keep active window with regular background
-vim.api.nvim_set_hl(0, 'Normal', { bg = '#000000' })
-
--- Make the window separators more visible
--- vim.opt.winblend = 0
--- vim.opt.winhl = 'Normal:Normal,NormalNC:NormalNC'
-
--- Set a more visible split separator
--- vim.opt.fillchars = {
---     vert = '│',
---     horiz = '─',
---     horizup = '┴',
---     horizdown = '┬',
---     vertleft = '┤',
---     vertright = '├',
---     verthoriz = '┼',
--- }
-
--- Make split separators stand out with a distinct color
--- vim.api.nvim_set_hl(0, 'WinSeparator', { fg = '#4444ff', bold = true })
-
--- Optional: Add a statusline highlight for inactive windows
-vim.api.nvim_set_hl(0, 'StatusLineNC', { bg = '#232323', fg = '#888888' })
-vim.api.nvim_set_hl(0, 'StatusLine', { bg = '#000000', fg = '#ffffff' })
