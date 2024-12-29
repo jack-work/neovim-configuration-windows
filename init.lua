@@ -86,7 +86,7 @@ end, { nargs = 1, complete = 'file' })
 local builtin = require('telescope.builtin')
 -- Or a more explicit function version
 vim.keymap.set('n', '<leader>vsp', function()
-    vim.cmd('vsplit ' .. vim.fs.joinpath(vim.fn.expand('%:p:h'), vim.fn.expand('<cfile>')))
+  vim.cmd('vsplit ' .. vim.fs.joinpath(vim.fn.expand('%:p:h'), vim.fn.expand('<cfile>')))
 end, { noremap = true })
 vim.keymap.set('n', '<leader>ff', builtin.find_files, { desc = 'Find files' })
 vim.keymap.set('n', '<leader>fg', builtin.live_grep, { desc = 'Live grep' })
@@ -94,6 +94,13 @@ vim.keymap.set('n', '<leader>fb', builtin.buffers, { desc = 'Find buffers' })
 vim.keymap.set('n', '<leader>fh', builtin.help_tags, { desc = 'Help tags' })
 vim.keymap.set('n', '<leader>fr', builtin.oldfiles, { desc = 'Recent files' })
 vim.keymap.set('n', '<leader>fw', builtin.grep_string, { desc = 'Find word under cursor' })
+vim.keymap.set('n', '<leader>ft', function()
+  vim.ui.input({ prompt = 'File type: ' }, function(input)
+    if input then
+      builtin.live_grep({ type_filter = input })
+    end
+  end)
+end, { desc = 'Find files by type' })
 vim.api.nvim_set_keymap('n', '<Leader>bs', ':NvrBottomSplit ', { noremap = true })
 
 vim.api.nvim_set_keymap('n', '<leader>gs', ':Git<CR>', { noremap = true, silent = true })
@@ -115,12 +122,12 @@ vim.keymap.set({ 'n', 'v' }, '<leader>fo', vim.lsp.buf.format)
 -- fugitive shortcuts
 
 vim.api.nvim_create_user_command('Bless', function()
-    local main = vim.fn.system('git rev-parse --abbrev-ref origin/HEAD'):gsub("origin/", ""):gsub("\n", "")
-    vim.cmd('Git stash --include-untracked')
-    vim.cmd('Git checkout ' .. main)
-    vim.cmd('Git pull')
-    vim.cmd('Git checkout -')
-    vim.cmd('Git rebase ' .. main)
+  local main = vim.fn.system('git rev-parse --abbrev-ref origin/HEAD'):gsub("origin/", ""):gsub("\n", "")
+  vim.cmd('Git stash --include-untracked')
+  vim.cmd('Git checkout ' .. main)
+  vim.cmd('Git pull')
+  vim.cmd('Git checkout -')
+  vim.cmd('Git rebase ' .. main)
 end, {})
 
 -- Optional keymap
@@ -141,17 +148,17 @@ vim.wo.number = true
 vim.wo.relativenumber = true
 vim.wo.wrap = false
 vim.api.nvim_create_autocmd("FileType", {
-    pattern = "markdown",
-    callback = function()
-        vim.opt_local.wrap = true
-        vim.opt_local.linebreak = true
-    end,
+  pattern = "markdown",
+  callback = function()
+    vim.opt_local.wrap = true
+    vim.opt_local.linebreak = true
+  end,
 })
 vim.o.shell = "pwsh.exe"
 
-vim.opt.tabstop = 2     -- Width of tab character
-vim.opt.softtabstop = 2 -- Fine tunes amount of whitespace
-vim.opt.shiftwidth = 2  -- Width of indentation
+vim.opt.tabstop = 2      -- Width of tab character
+vim.opt.softtabstop = 2  -- Fine tunes amount of whitespace
+vim.opt.shiftwidth = 2   -- Width of indentation
 
 vim.opt.expandtab = true -- Convert tabs to spaces
 vim.opt.smartcase = true
@@ -163,4 +170,12 @@ vim.keymap.set('n', '<M-k>', ':resize +2<CR>')
 vim.keymap.set('n', '<M-j>', ':resize -2<CR>')
 vim.keymap.set('n', '<M-h>', ':vertical resize -2<CR>')
 vim.keymap.set('n', '<M-l>', ':vertical resize +2<CR>')
+
+vim.keymap.set('n', '<leader>ep', ':e $MYVIMRC<CR>')
+vim.keymap.set('n', '<leader>cd', ':cd %:p:h<CR>', { desc = 'Change to current file directory' })
+vim.keymap.set('n', '<leader>c-', ':cd -<CR>', { desc = 'Change to previous directory' })
+
+-- copy path to current file
+-- :let @+ = expand('%:p')
+vim.keymap.set({ 'n', 'v' }, '<leader>yp', ':let @+ = expand(\'%:p\')<CR>', { desc = 'yank current file path to clipboard' })
 
