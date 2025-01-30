@@ -1,5 +1,3 @@
-local M = {}
-
 local state = {
   floating = {
     buf = -1,
@@ -43,7 +41,7 @@ local function openwindow(opts)
     return { buf = buf, win = win }
 end
 
-function M.aichat()
+local function aichat()
   if not vim.api.nvim_win_is_valid(state.floating.win) then
     state.floating = openwindow { buf = state.floating.buf }
     if vim.bo[state.floating.buf].buftype ~= "terminal" then
@@ -56,7 +54,7 @@ function M.aichat()
 end
 
 -- Create the command
-vim.api.nvim_create_user_command('Aichat', M.aichat, {})
+vim.api.nvim_create_user_command('Aichat', aichat, {})
 vim.keymap.set('n', '<leader>ai', ':Aichat<CR>', { noremap = true, silent = true })
 
-return M
+return {}
