@@ -13,7 +13,7 @@ return {
 
     toggleterm.setup({
       size = 10,
-      open_mapping = [[<C-\>]],
+      open_mapping = [[<C-3>]],
       hide_numbers = true,
       shade_filetypes = {},
       shade_terminals = true,
@@ -39,10 +39,11 @@ return {
     local nodeCLI = Terminal:new({
       cmd = "yipyap",
       direction = "float",
+      open_mapping = [[<C-q>]],
       float_opts = {
         border = "curved",
         width = 80,
-        height = 20,
+        height = 50,
       },
       close_on_exit = true,
       start_in_insert = true,

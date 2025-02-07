@@ -1,3 +1,4 @@
+---@diagnostic disable: undefined-field, undefined-global: vim
 local state = {
   floating = {
     buf = -1,

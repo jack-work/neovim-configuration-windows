@@ -19,6 +19,7 @@ return {
   {
     'stevearc/oil.nvim',
     opts = {},
+    show_path = true,
     keys = {
       { "<leader>-", ":Oil<CR>", desc = "Open parent directory" },
       {
