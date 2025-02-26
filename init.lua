@@ -174,6 +174,7 @@ vim.keymap.set('n', '<M-l>', ':vertical resize +2<CR>')
 vim.keymap.set('n', '<leader>ep', ':e $MYVIMRC<CR>')
 vim.keymap.set('n', '<leader>cd', ':cd %:p:h<CR>', { desc = 'Change to current file directory' })
 vim.keymap.set('n', '<leader>c-', ':cd -<CR>', { desc = 'Change to previous directory' })
+vim.keymap.set('t', '<esc><esc>', '<C-\\><C-n>', { desc = 'Exit terminal mode' })
 
 -- copy path to current file
 -- :let @+ = expand('%:p')

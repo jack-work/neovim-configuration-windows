@@ -16,12 +16,13 @@ local function openwindow(opts)
     local col = math.floor((vim.o.columns - width) / 2)
 
     -- Create a new buffer for the terminal
-    local buf = nil
-    if vim.api.nvim_buf_is_valid(opts.buf) then
-      buf = opts.buf
-    else
-      buf = vim.api.nvim_create_buf(false, true)
-    end
+     local buf = nil
+     if vim.api.nvim_buf_is_valid(opts.buf) then
+       buf = opts.buf
+     else
+       buf = vim.api.nvim_create_buf(false, true)
+       vim.api.nvim_buf_set_option(buf, 'bufhidden', 'hide')
+     end
 
     -- Set up the floating window
     local win_opts = {

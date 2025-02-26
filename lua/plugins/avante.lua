@@ -41,5 +41,10 @@ return {
         ft = { "markdown", "Avante" },
       },
     },
+    keys = {
+      {
+        "<leader>vt", ":AvanteToggle<CR>"
+      },
+    }
   }
 }
