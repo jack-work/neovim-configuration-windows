@@ -22,10 +22,34 @@ return {
         path_display = { "truncate" },
         file_ignore_patterns = {
           "node_modules",
-          ".git/",
+          "%.git/",
+          "%.cache",
+          "%.DS_Store",
+          "build/",
           "dist/",
-          "build/"
+          "%.env",
+          ".*bin/",
+          ".*obj/",
+          ".*exe/",
         },
+        vimgrep_arguments = {
+          "rg",
+          "--color=never",
+          "--no-heading",
+          "--with-filename",
+          "--line-number",
+          "--column",
+          "--smart-case",
+          "--hidden",
+          -- Add ignore patterns for ripgrep
+          "--glob=!.git/*",
+          "--glob=!node_modules/*",
+          "--glob=!build/*",
+          "--glob=!dist/*",
+          "--glob=!obj/*",
+          "--glob=!bin/*",
+          "--glob=!*/**/exe/*",
+        }
       }
     })
 

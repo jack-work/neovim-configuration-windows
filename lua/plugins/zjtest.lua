@@ -1,7 +1,7 @@
 return {
-  dir = vim.fn.stdpath("config") .. "/lua/plugins/zj",
+  dir = vim.fn.stdpath("config") .. "/lua/zj",
   config = function()
-    require("plugins/zj").setup()
+    require("zj").setup()
   end
 }
 
