@@ -16,9 +16,9 @@ return {
   },
   config = function()
     local telescope = require('telescope')
-    local builtin = require('telescope.builtin')
     telescope.setup({
       defaults = {
+        shorten_path = true,
         path_display = { "truncate" },
         file_ignore_patterns = {
           "node_modules",
@@ -51,58 +51,59 @@ return {
           "--glob=!*/**/exe/*",
         }
       }
+
     })
 
     -- Load fzf native if installed
     pcall(telescope.load_extension, 'fzf')
-
-    -- Keymaps
-    vim.keymap.set({ 'n', 'v' }, '<leader>fg', function()
-      builtin.live_grep({
+  end,
+  keys = {
+    { '<leader>fg', function()
+      require("telescope.builtin").live_grep({
         prompt_title = "FILE GREP!"
       })
-    end, { desc = 'Live grep' })
+    end, { desc = 'Live grep' } },
 
-    vim.keymap.set({ 'n', 'v' }, '<leader>fgb', function()
-      builtin.live_grep({
+    { '<leader>fgb', function()
+      require("telescope.builtin").live_grep({
         grep_open_files = true,
         prompt_title = "Can You Suffer the Buffer?",
         only_sort_text = true,
       })
-    end, { desc = 'Find word under cursor' })
+    end, { desc = 'Find word under cursor' } },
 
-    vim.keymap.set({ 'n', 'v' }, '<leader>fb', function()
-      builtin.buffers({
+    { '<leader>fb', function()
+      require("telescope.builtin").buffers({
         prompt_title = "Buffer? I Hardly Know Her!"
       })
-    end, { desc = 'Find buffers' })
+    end, { desc = 'Find buffers' } },
 
-    vim.keymap.set({ 'n', 'v' }, '<leader>fh', function()
-      builtin.help_tags({
+    { '<leader>fh', function()
+      require("telescope.builtin").help_tags({
         prompt_title = "Help me if you can I'm feeling down"
       })
-    end, { desc = 'Help tags' })
+    end, { desc = 'Help tags' } },
 
-    vim.keymap.set({ 'n', 'v' }, '<leader>fr', function()
-      builtin.oldfiles({
+    { '<leader>fr', function()
+      require("telescope.builtin").oldfiles({
         prompt_title = "History repeats itself."
       })
-    end, { desc = 'Recent files' })
-    vim.keymap.set({ 'n', 'v' }, '<leader>fw', function()
-      builtin.grep_string({
+    end, { desc = 'Recent files' } },
+
+    { '<leader>fw', function()
+      require("telescope.builtin").grep_string({
         prompt_title = "Words, words, words."
       })
-    end, { desc = 'Find word under cursor' })
+    end, { desc = 'Find word under cursor' } },
 
-    vim.keymap.set({ 'n', 'v' }, '<leader>fig', function()
-      builtin.grep_string({
+    { '<leader>fig', function()
+      require("telescope.builtin").live_grep({
         prompt_title = "Out grepping in foreign lands",
         cwd = vim.fn.expand('%:p:h')
       })
-    end, { desc = 'Find word under cursor in current dir' })
-  end,
-  {
-    "danymat/neogen",
-    config = true,
-  }
+    end, { desc = 'Find word under cursor in current dir' } },
+    {
+      '<C-f>', function() require('telescope.actions.layout').toggle_preview() end
+    }
+  },
 }

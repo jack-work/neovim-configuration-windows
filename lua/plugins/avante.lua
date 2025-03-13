@@ -43,7 +43,10 @@ return {
     },
     keys = {
       {
-        "<leader>vt", ":AvanteToggle<CR>"
+        "<leader>avt", ":AvanteToggle<CR>"
+      },
+      {
+        "<leader>avc", ":AvanteClear<CR>"
       },
     }
   }

@@ -112,10 +112,10 @@ vim.keymap.set('n', '<C-h>', '<C-w>h', { desc = 'Move to left split' })
 vim.keymap.set('n', '<C-l>', '<C-w>l', { desc = 'Move to right split' })
 vim.keymap.set('n', '<C-j>', '<C-w>j', { desc = 'Move to down split' })
 vim.keymap.set('n', '<C-k>', '<C-w>k', { desc = 'Move to up split' })
-vim.keymap.set('n', '<A-h>', '<C-w>H', { desc = 'Move to left split' })
-vim.keymap.set('n', '<A-l>', '<C-w>L', { desc = 'Move to right split' })
-vim.keymap.set('n', '<A-j>', '<C-w>J', { desc = 'Move to down split' })
-vim.keymap.set('n', '<A-k>', '<C-w>K', { desc = 'Move to up split' })
+vim.keymap.set('n', '<C-A-h>', '<C-w>H', { desc = 'Move to left split' })
+vim.keymap.set('n', '<C-A-l>', '<C-w>L', { desc = 'Move to right split' })
+vim.keymap.set('n', '<C-A-j>', '<C-w>J', { desc = 'Move to down split' })
+vim.keymap.set('n', '<C-A-k>', '<C-w>K', { desc = 'Move to up split' })
 vim.keymap.set('n', '<leader>rn', vim.lsp.buf.rename, {})
 vim.keymap.set({ 'n', 'v' }, 'gr', '<cmd>Telescope lsp_references<CR>', { noremap = true })
 vim.keymap.set({ 'n', 'v' }, '<leader>fo', vim.lsp.buf.format)
@@ -163,15 +163,15 @@ vim.opt.shiftwidth = 2   -- Width of indentation
 vim.opt.expandtab = true -- Convert tabs to spaces
 vim.opt.smartcase = true
 vim.opt.ignorecase = true
+vim.opt.cursorline = true
 
-vim.keymap.set('n', '<leader>ep', ':Ex $LOCALAPPDATA/nvim/lua/plugins<CR>')
 vim.g.netrw_bufsettings = 'noma nomod nu nowrap ro nobl'
 vim.keymap.set('n', '<M-k>', ':resize +2<CR>')
 vim.keymap.set('n', '<M-j>', ':resize -2<CR>')
 vim.keymap.set('n', '<M-h>', ':vertical resize -2<CR>')
 vim.keymap.set('n', '<M-l>', ':vertical resize +2<CR>')
 
-vim.keymap.set('n', '<leader>ep', ':e $MYVIMRC<CR>')
+vim.keymap.set('n', '<leader>ev', ':e $MYVIMRC<CR>')
 vim.keymap.set('n', '<leader>cd', ':cd %:p:h<CR>', { desc = 'Change to current file directory' })
 vim.keymap.set('n', '<leader>c-', ':cd -<CR>', { desc = 'Change to previous directory' })
 vim.keymap.set('t', '<esc><esc>', '<C-\\><C-n>', { desc = 'Exit terminal mode' })
@@ -181,4 +181,9 @@ vim.keymap.set('t', '<esc><esc>', '<C-\\><C-n>', { desc = 'Exit terminal mode' }
 vim.keymap.set({ 'n', 'v' }, '<leader>yp', ':let @+ = expand(\'%:p\')<CR>', { desc = 'yank current file path to clipboard' })
 vim.keymap.set('n', '<leader><leader>', ':noh<CR>', { silent = true, desc = 'Clear search highlighting' })
 vim.keymap.set('n', '<leader>dq', ':lua vim.diagnostic.setqflist()<CR>', { desc = 'open diagnostics in a buffer so they can be searched' })
+
+vim.api.nvim_create_user_command('Timestamp', function()
+    local timestamp = os.date('[%Y-%m-%d %H:%M:%S]')
+    vim.api.nvim_put({timestamp}, '', false, true)
+end, {})
 

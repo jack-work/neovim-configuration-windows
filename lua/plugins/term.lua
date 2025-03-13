@@ -54,7 +54,28 @@ return {
       nodeCLI:toggle()
     end
 
+    -- Define the terminal instance
+    local aichat = Terminal:new({
+      cmd = "aichat -r coder",
+      direction = "float",
+      open_mapping = [[<C-q>]],
+      float_opts = {
+        border = "curved",
+        width = 150,
+        height = 50,
+      },
+      close_on_exit = true,
+      start_in_insert = true,
+    })
+
+    -- Create toggle function
+    function _TOGGLE_AICHAT()
+      aichat:toggle()
+    end
+
     -- Set keybinding
     vim.keymap.set("n", "<leader>yy", "<cmd>lua _TOGGLE_NODE_CLI()<CR>")
-  end
+    vim.keymap.set("n", "<leader>ai", "<cmd>lua _TOGGLE_AICHAT()<CR>")
+    vim.keymap.set("n", "<leader>th", ":term<CR>")
+  end,
 }

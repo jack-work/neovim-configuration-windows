@@ -17,29 +17,11 @@ return {
     'saadparwaiz1/cmp_luasnip',
   },
   {
-    'stevearc/oil.nvim',
-    opts = {},
-    show_path = true,
-    keys = {
-      { "<leader>-", ":Oil<CR>", desc = "Open parent directory" },
-      {
-        "<C-g>",
-        function()
-          local oil = require("oil")
-          local path = (oil.get_cursor_entry() or {}).path or oil.get_current_dir()
-          require("telescope.builtin").live_grep({ cwd = path })
-        end,
-        desc = "Grep in directory"
-      },
-    },
-    dependencies = { "nvim-tree/nvim-web-devicons" },
-  },
-  {
-    'catppuccin/nvim',
+    'rebelot/kanagawa.nvim',
     lazy = false,
     priority = 1000,
     config = function()
-      vim.cmd.colorscheme('catppuccin')
+      vim.cmd.colorscheme('kanagawa')
     end
   },
   {
@@ -62,5 +44,9 @@ return {
         highlight = { enable = true },
       })
     end,
+  },
+  {
+    "danymat/neogen",
+    config = true,
   }
 }

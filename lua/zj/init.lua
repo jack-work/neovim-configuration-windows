@@ -21,10 +21,11 @@ function M.create_note()
       filename = filename .. ".md"
     end
 
-    local full_path = notes_dir .. "/" .. filename
+    local full_path = vim.fs.normalize(vim.fs.joinpath(notes_dir, filename))
 
     -- Create the file
     local file = io.open(full_path, "w")
+    vim.notify("Attempting create note in: " .. full_path);
     if file then
       file:write("# " .. os.date("%Y-%m-%d %A") .. "\n\n")
       file:close()

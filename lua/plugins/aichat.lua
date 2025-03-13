@@ -57,6 +57,6 @@ end
 
 -- Create the command
 vim.api.nvim_create_user_command('Aichat', aichat, {})
-vim.keymap.set('n', '<leader>ai', ':Aichat<CR>', { noremap = true, silent = true })
+-- vim.keymap.set('n', '<leader>ai', ':Aichat<CR>', { noremap = true, silent = true })
 
 return {}

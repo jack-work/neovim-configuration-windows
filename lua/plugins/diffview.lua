@@ -56,4 +56,9 @@ return {
       },
     })
   end,
+  -- keys = {
+  --   '<leader>dvm', ':DiffviewOpen head..master<CR>',
+  --   '<leader>dvc', ':DiffviewOpen head..master<CR>',
+  --   '<leader>dvr', ':DiffviewRefresh<CR>'
+  -- }
 }
