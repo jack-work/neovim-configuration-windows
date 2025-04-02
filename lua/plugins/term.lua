@@ -76,6 +76,6 @@ return {
     -- Set keybinding
     vim.keymap.set("n", "<leader>yy", "<cmd>lua _TOGGLE_NODE_CLI()<CR>")
     vim.keymap.set("n", "<leader>ai", "<cmd>lua _TOGGLE_AICHAT()<CR>")
-    vim.keymap.set("n", "<leader>th", ":term<CR>")
+    vim.keymap.set("n", "<leader>th", ":exe 'cd %:p:h' | terminal<CR>")
   end,
 }

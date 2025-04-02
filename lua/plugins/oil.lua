@@ -4,7 +4,13 @@ return {
   show_path = true,
   keys = {
     { "<leader>-",    ":Oil<CR>",              desc = "Open parent directory" },
-    { "<leader>down", ":Oil $userprofile<CR>", desc = "Open parent directory" },
+    {
+      "<leader>src",
+      function()
+        require("oil").open(vim.env.userprofile .. '\\src')
+      end,
+      desc = "Open src folder"
+    },
     {
       "<leader>down",
       function()

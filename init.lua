@@ -141,6 +141,7 @@ vim.keymap.set('n', 'gD', vim.lsp.buf.declaration)
 vim.keymap.set('n', 'K', vim.lsp.buf.hover)
 -- Go to implementation
 vim.keymap.set('n', 'gi', vim.lsp.buf.implementation)
+vim.keymap.set('n', 'gl', vim.diagnostic.open_float)
 -- Map both normal and visual mode
 vim.keymap.set({ 'n', 'v' }, '<leader>.', vim.lsp.buf.code_action)
 

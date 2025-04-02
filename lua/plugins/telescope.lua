@@ -64,13 +64,13 @@ return {
       })
     end, { desc = 'Live grep' } },
 
-    { '<leader>fgb', function()
-      require("telescope.builtin").live_grep({
-        grep_open_files = true,
-        prompt_title = "Can You Suffer the Buffer?",
-        only_sort_text = true,
-      })
-    end, { desc = 'Find word under cursor' } },
+    -- { '<leader>fgb', function()
+    --   require("telescope.builtin").live_grep({
+    --     grep_open_files = true,
+    --     prompt_title = "Can You Suffer the Buffer?",
+    --     only_sort_text = true,
+    --   })
+    -- end, { desc = 'Find word under cursor' } },
 
     { '<leader>fb', function()
       require("telescope.builtin").buffers({
