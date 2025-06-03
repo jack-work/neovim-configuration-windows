@@ -16,29 +16,29 @@ vim.opt.rtp:prepend(lazypath)
 require("lazy").setup("plugins")
 
 require('mason').setup()
-require('mason-lspconfig').setup({
-  automatic_installation = true,
-})
-require('mason-lspconfig').setup_handlers {
-  -- Default handler (will be called for each installed server that doesn't have
-  -- a dedicated handler)
-  function(server_name)
-    require("lspconfig")[server_name].setup {}
-  end,
-
-  -- You can still customize specific servers
-  ["lua_ls"] = function()
-    require("lspconfig").lua_ls.setup {
-      settings = {
-        Lua = {
-          diagnostics = {
-            globals = { 'vim' }
-          }
-        }
-      }
-    }
-  end,
-}
+-- require('mason-lspconfig').setup({
+--   automatic_installation = true,
+-- })
+-- require('mason-lspconfig').setup_handlers {
+--   -- Default handler (will be called for each installed server that doesn't have
+--   -- a dedicated handler)
+--   function(server_name)
+--     require("lspconfig")[server_name].setup {}
+--   end,
+--
+--   -- You can still customize specific servers
+--   ["lua_ls"] = function()
+--     require("lspconfig").lua_ls.setup {
+--       settings = {
+--         Lua = {
+--           diagnostics = {
+--             globals = { 'vim' }
+--           }
+--         }
+--       }
+--     }
+--   end,
+-- }
 require('lspconfig').lua_ls.setup {}
 
 require('cmp').setup({
@@ -186,5 +186,22 @@ vim.keymap.set('n', '<leader>dq', ':lua vim.diagnostic.setqflist()<CR>', { desc 
 vim.api.nvim_create_user_command('Timestamp', function()
     local timestamp = os.date('[%Y-%m-%d %H:%M:%S]')
     vim.api.nvim_put({timestamp}, '', false, true)
+end, {})
+
+vim.keymap.set('n', '<leader>gu', function()
+  -- Get current file's relative path
+  local relative_path = vim.fn.fnamemodify(vim.fn.expand('%'), ':.')
+  -- Convert backslashes to forward slashes
+  relative_path = string.gsub(relative_path, "\\", "/")
+  -- Get cursor position
+  local cursor_line = vim.fn.line('.')
+  local cursor_end_line = cursor_line
+  -- Build the URL with line highlighting
+  local url = "https://msazure.visualstudio.com/OneAgile/_git/PowerApps-Client?path=/" .. relative_path
+  url = url .. "&line=" .. cursor_line .. "&lineEnd=" .. cursor_end_line
+  url = url .. "&lineStartColumn=1&lineEndColumn=46&lineStyle=plain&_a=contents"
+  -- Copy to clipboard
+  vim.fn.setreg('+', url)
+  print("Azure DevOps URL copied to clipboard: " .. url)
 end, {})
 

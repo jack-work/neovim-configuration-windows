@@ -18,16 +18,24 @@ return {
   },
   {
     'rebelot/kanagawa.nvim',
+    theme = 'wave',
     lazy = false,
     priority = 1000,
     config = function()
+      require('kanagawa').setup({
+        transparent = true,
+        terminalColors = true,
+        theme = 'dragon',
+        undercurl = true,
+        keywordStyle = { italic = true },
+      })
       vim.cmd.colorscheme('kanagawa')
     end
   },
   {
     'tpope/vim-fugitive',
     'tpope/vim-rhubarb',       -- GitHub integration
-    'lewis6991/gitsigns.nvim', -- Git signs in gutter
+    -- 'lewis6991/gitsigns.nvim', -- Git signs in gutter
     keys = {
       { "<leader>gs", ":Git<CR>",       desc = "Git status" },
       { "<leader>gb", ":Git blame<CR>", desc = "Git blame" },

@@ -1,9 +1,23 @@
 return {
   'stevearc/oil.nvim',
-  opts = {},
+  opts = {
+    -- Configuration for the file preview window
+    preview_win = {
+      -- Whether the preview window is automatically updated when the cursor is moved
+      update_on_cursor_moved = false,
+      -- How to open the preview window "load"|"scratch"|"fast_scratch"
+      preview_method = "fast_scratch",
+      -- A function that returns true to disable preview on a file e.g. to avoid lag
+      disable_preview = function(filename)
+        return false
+      end,
+      -- Window-local options to use for preview window buffers
+      win_options = {},
+    },
+  },
   show_path = true,
   keys = {
-    { "<leader>-",    ":Oil<CR>",              desc = "Open parent directory" },
+    { "<leader>-", ":Oil<CR>", desc = "Open parent directory" },
     {
       "<leader>src",
       function()
@@ -25,7 +39,8 @@ return {
         local path = (oil.get_cursor_entry() or {}).path or oil.get_current_dir() or vim.fn.expand('%:p:h')
         require("telescope.builtin").live_grep({
           prompt_title = "grepping the directory of the current buffer",
-          cwd = path })
+          cwd = path
+        })
       end,
       desc = "Grep in directory"
     },
