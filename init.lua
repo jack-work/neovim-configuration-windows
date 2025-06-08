@@ -16,6 +16,13 @@ vim.opt.rtp:prepend(lazypath)
 require("lazy").setup("plugins")
 
 require('mason').setup()
+require("mason-lspconfig").setup({
+  ensure_installed = { "powershell_es" }
+})
+
+require('lspconfig').powershell_es.setup{
+  bundle_path = vim.fn.stdpath "data" .. "/mason/packages/powershell-editor-services",
+}
 -- require('mason-lspconfig').setup({
 --   automatic_installation = true,
 -- })
