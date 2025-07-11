@@ -212,3 +212,13 @@ vim.keymap.set('n', '<leader>gu', function()
   print("Azure DevOps URL copied to clipboard: " .. url)
 end, {})
 
+vim.api.nvim_create_autocmd("TermOpen", {
+  callback = function()
+    vim.opt_local.number = true
+    vim.opt_local.relativenumber = true
+  end,
+})
+
+vim.keymap.set({"n","v"}, "<leader>m", "<C-w>|<C-w>_")
+vim.keymap.set("i", "<C-S-m>", "<esc><C-w>|<C-w>_i")
+

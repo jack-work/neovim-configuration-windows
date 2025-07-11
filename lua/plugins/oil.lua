@@ -1,6 +1,18 @@
 return {
   'stevearc/oil.nvim',
   opts = {
+    view_options = {
+      -- Show files and directories that start with "."
+      show_hidden = true,
+      -- This function defines what is considered a "hidden" file
+      is_hidden_file = function(name, bufnr)
+        return vim.startswith(name, ".")
+      end,
+      -- This function defines what will never be shown, even when `show_hidden` is set
+      is_always_hidden = function(name, bufnr)
+        return false
+      end,
+    },
     -- Configuration for the file preview window
     preview_win = {
       -- Whether the preview window is automatically updated when the cursor is moved
@@ -15,7 +27,6 @@ return {
       win_options = {},
     },
   },
-  show_path = true,
   keys = {
     { "<leader>-", ":Oil<CR>", desc = "Open parent directory" },
     {
