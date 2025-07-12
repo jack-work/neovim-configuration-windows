@@ -77,5 +77,26 @@ return {
     vim.keymap.set("n", "<leader>yy", "<cmd>lua _TOGGLE_NODE_CLI()<CR>")
     vim.keymap.set("n", "<leader>ai", "<cmd>lua _TOGGLE_AICHAT()<CR>")
     vim.keymap.set("n", "<leader>th", ":exe 'cd %:p:h' | terminal<CR>")
+    vim.keymap.set("n", "<leader>tm", function()
+      -- Create new buffer (exactly like :terminal does)
+      vim.cmd('enew')
+
+      -- Add your environment variables
+      local job_id = vim.fn.termopen('pwsh', {
+        env = {
+          VIM_SERVERNAME = vim.v.servername or 'VIMSERVER',
+          VIM_LISTEN_ADDRESS = vim.v.servername
+        }
+      })
+
+      vim.schedule(function()
+        vim.bo.syntax = ''
+        -- vim.bo.filetype = ''
+        -- vim.diagnostic.disable(0)
+        -- vim.wo.number = false
+        vim.wo.signcolumn = 'no'
+        vim.wo.spell = false
+      end)
+    end)
   end,
 }
