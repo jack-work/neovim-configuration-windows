@@ -65,6 +65,13 @@ return {
     {
       '<leader>conf',
       function() require("oil").open(vim.env.userprofile .. '/.config') end
+    },
+    {
+      '<leader>op',
+      function()
+        local oil = require("oil");
+        vim.fn.setreg("*", oil.get_current_dir()..oil.get_cursor_entry().name)
+      end
     }
   },
   dependencies = { "nvim-tree/nvim-web-devicons" },
