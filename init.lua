@@ -90,24 +90,22 @@ vim.api.nvim_create_user_command('NvrBottomSplit', function(opts)
   open_in_bottom_split(opts.args)
 end, { nargs = 1, complete = 'file' })
 
-local builtin = require('telescope.builtin')
--- Or a more explicit function version
 vim.keymap.set('n', '<leader>vsp', function()
   vim.cmd('vsplit ' .. vim.fs.joinpath(vim.fn.expand('%:p:h'), vim.fn.expand('<cfile>')))
 end, { noremap = true })
-vim.keymap.set('n', '<leader>ff', builtin.find_files, { desc = 'Find files' })
-vim.keymap.set('n', '<leader>fg', builtin.live_grep, { desc = 'Live grep' })
-vim.keymap.set('n', '<leader>fb', builtin.buffers, { desc = 'Find buffers' })
-vim.keymap.set('n', '<leader>fh', builtin.help_tags, { desc = 'Help tags' })
-vim.keymap.set('n', '<leader>fr', builtin.oldfiles, { desc = 'Recent files' })
-vim.keymap.set('n', '<leader>fw', builtin.grep_string, { desc = 'Find word under cursor' })
-vim.keymap.set('n', '<leader>ft', function()
-  vim.ui.input({ prompt = 'File type: ' }, function(input)
-    if input then
-      builtin.live_grep({ type_filter = input })
-    end
-  end)
-end, { desc = 'Find files by type' })
+-- vim.keymap.set('n', '<leader>ff', builtin.find_files, { desc = 'Find files' })
+-- vim.keymap.set('n', '<leader>fg', builtin.live_grep, { desc = 'Live grep' })
+-- vim.keymap.set('n', '<leader>fb', builtin.buffers, { desc = 'Find buffers' })
+-- vim.keymap.set('n', '<leader>fh', builtin.help_tags, { desc = 'Help tags' })
+-- vim.keymap.set('n', '<leader>fr', builtin.oldfiles, { desc = 'Recent files' })
+-- vim.keymap.set('n', '<leader>fw', builtin.grep_string, { desc = 'Find word under cursor' })
+-- vim.keymap.set('n', '<leader>ft', function()
+--   vim.ui.input({ prompt = 'File type: ' }, function(input)
+--     if input then
+--       builtin.live_grep({ type_filter = input })
+--     end
+--   end)
+-- end, { desc = 'Find files by type' })
 vim.api.nvim_set_keymap('n', '<Leader>bs', ':NvrBottomSplit ', { noremap = true })
 
 vim.api.nvim_set_keymap('n', '<leader>gs', ':Git<CR>', { noremap = true, silent = true })
@@ -124,7 +122,7 @@ vim.keymap.set('n', '<C-A-l>', '<C-w>L', { desc = 'Move to right split' })
 vim.keymap.set('n', '<C-A-j>', '<C-w>J', { desc = 'Move to down split' })
 vim.keymap.set('n', '<C-A-k>', '<C-w>K', { desc = 'Move to up split' })
 vim.keymap.set('n', '<leader>rn', vim.lsp.buf.rename, {})
-vim.keymap.set({ 'n', 'v' }, 'gr', '<cmd>Telescope lsp_references<CR>', { noremap = true })
+vim.keymap.set({ 'n', 'v' }, 'gr', '<cmd>FzfLua lsp_references<CR>', { noremap = true })
 vim.keymap.set({ 'n', 'v' }, '<leader>fo', vim.lsp.buf.format)
 -- fugitive shortcuts
 

@@ -43,18 +43,18 @@ return {
       end,
       desc = "Open Downloads folder"
     },
-    {
-      "<leader>fig",
-      function()
-        local oil = require("oil")
-        local path = (oil.get_cursor_entry() or {}).path or oil.get_current_dir() or vim.fn.expand('%:p:h')
-        require("telescope.builtin").live_grep({
-          prompt_title = "grepping the directory of the current buffer",
-          cwd = path
-        })
-      end,
-      desc = "Grep in directory"
-    },
+    -- {
+    --   "<leader>fig",
+    --   function()
+    --     local oil = require("oil")
+    --     local path = (oil.get_cursor_entry() or {}).path or oil.get_current_dir() or vim.fn.expand('%:p:h')
+    --     require("telescope.builtin").live_grep({
+    --       prompt_title = "grepping the directory of the current buffer",
+    --       cwd = path
+    --     })
+    --   end,
+    --   desc = "Grep in directory"
+    -- },
     {
       '<leader>ep',
       function()

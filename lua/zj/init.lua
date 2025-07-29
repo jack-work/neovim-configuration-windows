@@ -37,39 +37,13 @@ function M.create_note()
   end)
 end
 
-function M.search_note()
-  local notes_dir = os.getenv("zjnotes")
-
-  if not notes_dir then
-    vim.notify("Environment variable 'zjnotes' not found!", vim.log.levels.ERROR)
-    return
-  end
-
-  require('telescope.builtin').find_files({
-    prompt_title = "Search Notes",
-    cwd = notes_dir,
-  })
-end
-
-function M.grep_notes()
-  local notes_dir = os.getenv("zjnotes")
-
-  if not notes_dir then
-    vim.notify("Environment variable 'zjnotes' not found!", vim.log.levels.ERROR)
-    return
-  end
-
-  require('telescope.builtin').live_grep({
-    prompt_title = "Grep Notes",
-    cwd = notes_dir,
-  })
-end
 
 function M.setup()
   -- Create keybindings
   vim.keymap.set("n", "<leader>jz", M.create_note, { desc = "Create new note" })
-  vim.keymap.set("n", "<leader>js", M.search_note, { desc = "Search notes" })
-  vim.keymap.set("n", "<leader>jg", M.grep_notes, { desc = "Grep notes" })
+  -- todo: replace with fzf lua
+  -- vim.keymap.set("n", "<leader>js", M.search_note, { desc = "Search notes" })
+  -- vim.keymap.set("n", "<leader>jg", M.grep_notes, { desc = "Grep notes" })
 end
 
 return M
