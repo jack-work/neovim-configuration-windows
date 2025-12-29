@@ -37,7 +37,6 @@ function M.create_note()
   end)
 end
 
-
 function M.setup()
   -- Create keybindings
   vim.keymap.set("n", "<leader>jz", M.create_note, { desc = "Create new note" })

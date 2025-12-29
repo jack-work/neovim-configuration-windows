@@ -42,7 +42,7 @@ return {
         tabline = {},
         winbar = {},
         inactive_winbar = {},
-        extensions = {'oil'}
+        extensions = { 'oil' }
       }
     end
   },
@@ -68,6 +68,7 @@ return {
         },
 
         exclude_filetype = {
+          '',
           'help',
           'startify',
           'dashboard',

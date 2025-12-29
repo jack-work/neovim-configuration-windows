@@ -34,24 +34,15 @@ return {
   },
   {
     'tpope/vim-fugitive',
-    'tpope/vim-rhubarb',       -- GitHub integration
+    'tpope/vim-rhubarb', -- GitHub integration
     -- 'lewis6991/gitsigns.nvim', -- Git signs in gutter
     keys = {
-      { "<leader>gs", ":Git<CR>",       desc = "Git status" },
-      { "<leader>gb", ":Git blame<CR>", desc = "Git blame" },
-      { "<leader>gd", ":Gdiff<CR>",     desc = "Git diff" },
-      { "<leader>gl", ":Git log<CR>",   desc = "Git log" },
+      { "<leader>gs", ":Git<CR>",            desc = "Git status" },
+      { "<leader>gb", ":Git blame<CR>",      desc = "Git blame" },
+      { "<leader>gd", ":Gdiff<CR>",          desc = "Git diff" },
+      { "<leader>gl", ":Git log<CR>",        desc = "Git log" },
+      { "<leader>rb", ":Git rebase -i HEAD~" },
     },
-  },
-  {
-    "nvim-treesitter/nvim-treesitter",
-    build = ":TSUpdate",
-    config = function()
-      require("nvim-treesitter.configs").setup({
-        ensure_installed = { "typescript", "javascript" }, -- add languages you need
-        highlight = { enable = true },
-      })
-    end,
   },
   {
     "danymat/neogen",

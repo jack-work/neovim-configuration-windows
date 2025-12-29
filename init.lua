@@ -20,32 +20,10 @@ require("mason-lspconfig").setup({
   ensure_installed = { "powershell_es" }
 })
 
-require('lspconfig').powershell_es.setup{
+require('lspconfig').powershell_es.setup {
   bundle_path = vim.fn.stdpath "data" .. "/mason/packages/powershell-editor-services",
 }
--- require('mason-lspconfig').setup({
---   automatic_installation = true,
--- })
--- require('mason-lspconfig').setup_handlers {
---   -- Default handler (will be called for each installed server that doesn't have
---   -- a dedicated handler)
---   function(server_name)
---     require("lspconfig")[server_name].setup {}
---   end,
---
---   -- You can still customize specific servers
---   ["lua_ls"] = function()
---     require("lspconfig").lua_ls.setup {
---       settings = {
---         Lua = {
---           diagnostics = {
---             globals = { 'vim' }
---           }
---         }
---       }
---     }
---   end,
--- }
+
 require('lspconfig').lua_ls.setup {}
 
 require('cmp').setup({
@@ -184,13 +162,15 @@ vim.keymap.set('t', '<esc><esc>', '<C-\\><C-n>', { desc = 'Exit terminal mode' }
 
 -- copy path to current file
 -- :let @+ = expand('%:p')
-vim.keymap.set({ 'n', 'v' }, '<leader>yp', ':let @+ = expand(\'%:p\')<CR>', { desc = 'yank current file path to clipboard' })
+vim.keymap.set({ 'n', 'v' }, '<leader>yp', ':let @+ = expand(\'%:p\')<CR>',
+  { desc = 'yank current file path to clipboard' })
 vim.keymap.set('n', '<leader><leader>', ':noh<CR>', { silent = true, desc = 'Clear search highlighting' })
-vim.keymap.set('n', '<leader>dq', ':lua vim.diagnostic.setqflist()<CR>', { desc = 'open diagnostics in a buffer so they can be searched' })
+vim.keymap.set('n', '<leader>dq', ':lua vim.diagnostic.setqflist()<CR>',
+  { desc = 'open diagnostics in a buffer so they can be searched' })
 
 vim.api.nvim_create_user_command('Timestamp', function()
-    local timestamp = os.date('[%Y-%m-%d %H:%M:%S]')
-    vim.api.nvim_put({timestamp}, '', false, true)
+  local timestamp = os.date('[%Y-%m-%d %H:%M:%S]')
+  vim.api.nvim_put({ timestamp }, '', false, true)
 end, {})
 
 vim.keymap.set('n', '<leader>gu', function()
@@ -217,6 +197,172 @@ vim.api.nvim_create_autocmd("TermOpen", {
   end,
 })
 
-vim.keymap.set({"n","v"}, "<leader>m", "<C-w>|<C-w>_")
+vim.keymap.set({ "n", "v" }, "<leader>m", "<C-w>|<C-w>_")
 vim.keymap.set("i", "<C-S-m>", "<esc><C-w>|<C-w>_i")
 
+
+vim.keymap.set('n', ']d', function()
+  -- Try each severity level in order of importance
+  local severities = {
+    vim.diagnostic.severity.ERROR,
+    vim.diagnostic.severity.WARN,
+    vim.diagnostic.severity.INFO,
+    vim.diagnostic.severity.HINT,
+  }
+
+  for _, severity in ipairs(severities) do
+    local next = vim.diagnostic.get_next({ severity = severity })
+    if next then
+      vim.diagnostic.goto_next({ severity = severity })
+      return
+    end
+  end
+
+  -- If no diagnostics of any severity, just call goto_next (will show "No more diagnostics")
+  vim.diagnostic.goto_next()
+end, { desc = 'Go to next diagnostic (prioritized)' })
+
+vim.keymap.set('n', '[d', function()
+  local severities = {
+    vim.diagnostic.severity.ERROR,
+    vim.diagnostic.severity.WARN,
+    vim.diagnostic.severity.INFO,
+    vim.diagnostic.severity.HINT,
+  }
+
+  for _, severity in ipairs(severities) do
+    local prev = vim.diagnostic.get_prev({ severity = severity })
+    if prev then
+      vim.diagnostic.goto_prev({ severity = severity })
+      return
+    end
+  end
+
+  vim.diagnostic.goto_prev()
+end, { desc = 'Go to previous diagnostic (prioritized)' })
+
+-- Runs the nearest Get-Token.ps1 ancestor script
+-- Also contains an implementation of updating file buffer that can probably be generalized.
+vim.keymap.set("n", "<leader>Tt", function()
+  -- Get the directory of the current buffer
+  local current_file = vim.api.nvim_buf_get_name(0)
+  local current_dir = vim.fn.fnamemodify(current_file, ':p:h')
+
+  -- Search for Get-Token.ps1 in ancestor directories
+  local script_file = vim.fn.findfile('Get-Token.ps1', current_dir .. ';')
+
+  if script_file == '' then
+    vim.notify("Get-Token.ps1 not found in ancestor directories", vim.log.levels.ERROR)
+    return
+  end
+
+  -- Get the absolute path and directory of the script
+  local script_path = vim.fn.fnamemodify(script_file, ':p')
+  local script_dir = vim.fn.fnamemodify(script_file, ':p:h')
+
+  -- Create a new buffer for output
+  local buf = vim.api.nvim_create_buf(false, true)
+  vim.api.nvim_buf_set_name(buf, 'Get-Token Output')
+
+  -- Set buffer options
+  vim.api.nvim_buf_set_option(buf, 'buftype', 'nofile')
+  vim.api.nvim_buf_set_option(buf, 'bufhidden', 'wipe')
+  vim.api.nvim_buf_set_option(buf, 'filetype', 'powershell')
+  vim.api.nvim_buf_set_option(buf, 'fileformat', 'unix')
+
+  -- Open the buffer in a split
+  vim.cmd('split')
+  vim.api.nvim_win_set_buf(0, buf)
+
+  -- Add initial message
+  vim.api.nvim_buf_set_lines(buf, 0, -1, false, {
+    "Running: pwsh -File " .. script_path,
+    "Working Directory: " .. script_dir,
+    string.rep("-", 80),
+    ""
+  })
+
+  local line_count = 4
+
+  -- Helper function to strip carriage returns
+  local function strip_cr(lines)
+    return vim.tbl_map(function(line)
+      return line:gsub('\r', '')
+    end, lines)
+  end
+
+  -- Run the script using pwsh
+  local cmd = string.format('pwsh -File "%s"', script_path)
+
+  vim.fn.jobstart(cmd, {
+    cwd = script_dir, -- Set working directory to script's directory
+    on_stdout = function(_, data)
+      if data then
+        -- Filter out empty strings and strip CR
+        local lines = vim.tbl_filter(function(line)
+          return line ~= ''
+        end, strip_cr(data))
+
+        if #lines > 0 then
+          vim.api.nvim_buf_set_lines(buf, line_count, line_count, false, lines)
+          line_count = line_count + #lines
+
+          -- Auto-scroll to bottom
+          local wins = vim.fn.win_findbuf(buf)
+          for _, win in ipairs(wins) do
+            vim.api.nvim_win_set_cursor(win, { line_count, 0 })
+          end
+        end
+      end
+    end,
+    on_stderr = function(_, data)
+      if data then
+        local lines = vim.tbl_filter(function(line)
+          return line ~= ''
+        end, strip_cr(data))
+
+        if #lines > 0 then
+          -- Prefix error lines with [ERROR]
+          local error_lines = vim.tbl_map(function(line)
+            return "[ERROR] " .. line
+          end, lines)
+
+          vim.api.nvim_buf_set_lines(buf, line_count, line_count, false, error_lines)
+          line_count = line_count + #error_lines
+
+          -- Auto-scroll to bottom
+          local wins = vim.fn.win_findbuf(buf)
+          for _, win in ipairs(wins) do
+            vim.api.nvim_win_set_cursor(win, { line_count, 0 })
+          end
+        end
+      end
+    end,
+    on_exit = function(_, exit_code)
+      local status_lines = {
+        "",
+        string.rep("-", 80),
+      }
+
+      if exit_code == 0 then
+        table.insert(status_lines, "✓ Process completed successfully (exit code: 0)")
+      else
+        table.insert(status_lines, "✗ Process failed (exit code: " .. exit_code .. ")")
+      end
+
+      vim.api.nvim_buf_set_lines(buf, line_count, line_count, false, status_lines)
+      line_count = line_count + #status_lines
+
+      -- Make buffer read-only after completion
+      vim.api.nvim_buf_set_option(buf, 'modifiable', false)
+
+      -- Auto-scroll to bottom
+      local wins = vim.fn.win_findbuf(buf)
+      for _, win in ipairs(wins) do
+        vim.api.nvim_win_set_cursor(win, { line_count, 0 })
+      end
+    end,
+    stdout_buffered = false,
+    stderr_buffered = false,
+  })
+end)

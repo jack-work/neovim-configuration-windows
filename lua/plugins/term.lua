@@ -107,13 +107,16 @@ return {
     vim.cmd('cabbrev term Terminal')
     vim.keymap.set("n", "<leader>yy", "<cmd>lua _TOGGLE_NODE_CLI()<CR>")
     vim.keymap.set("n", "<leader>ai", "<cmd>lua _TOGGLE_AICHAT()<CR>")
-    vim.keymap.set("n", "<leader>th", ":exe 'cd %:p:h' | terminal<CR>")
+    vim.keymap.set("n", "<leader>th", function()
+      local dir = vim.fn.expand('%:p:h')
+      vim.cmd('edit term://' .. dir .. '//' .. vim.o.shell)
+    end)
     vim.keymap.set("n", "<leader>tm", function()
       -- Create new buffer (exactly like :terminal does)
       vim.cmd('enew')
 
       -- Add your environment variables
-      local job_id = vim.fn.termopen('pwsh', {
+      local job_id = vim.fn.termopen({'pwsh', '-NoExit', '-Command', '. prof'}, {
         env = {
           VIM_SERVERNAME = vim.v.servername or 'VIMSERVER',
           VIM_LISTEN_ADDRESS = vim.v.servername
