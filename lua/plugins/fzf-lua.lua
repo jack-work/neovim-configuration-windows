@@ -44,7 +44,7 @@ return {
     { "<leader>flg", function() require("fzf-lua").livegrep() end },
     { "<leader>fig", function()
       local fzf = require("fzf-lua")
-      fzf.livegrep(fzf.grep({ cwd = vim.fn.expand('%:p:h') }))
+      fzf.grep({ cwd = vim.fn.expand('%:p:h') })
     end },
     { "<leader>flt", function()
       vim.ui.input({

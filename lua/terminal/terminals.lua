@@ -101,6 +101,7 @@ function M.invoke_multi(config)
   local prefix = config.name
   local main_buf = nil
   local created_main = false
+  local original_buf = vim.api.nvim_get_current_buf()  -- Save original buffer
 
   -- Determine if we need new instances (non-singleton with existing buffers)
   local needs_new_group = not config.singleton
@@ -150,8 +151,8 @@ function M.invoke_multi(config)
         main_buf = buf_id
         created_main = true
       else
-        -- Hide background buffers
-        vim.cmd('hide')
+        -- Switch back to original buffer (don't hide - causes error on last window)
+        vim.api.nvim_set_current_buf(original_buf)
       end
     end
   end

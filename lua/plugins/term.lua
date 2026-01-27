@@ -93,12 +93,12 @@ return {
           },
         },
 
-        -- Claude Agency (skip permissions)
+        -- Clyde: Claude Agency (skip permissions)
         {
-          name = "claude_skip",
-          keymap = "<leader>clyde",
+          name = "clyde",
+          keymap = "<leader>cly",
           cmd = "agency claude --dangerously-skip-permissions",
-          desc = "Claude Agency (skip permissions)",
+          desc = "Clyde (Claude skip permissions)",
           singleton = true,
           use_ctrl = true,
           direction = "float",
