@@ -66,19 +66,12 @@ function M.setup(opts)
           term_opts.float_opts = term_config.float_opts
         end
 
-        -- Searchable: high scrollback for searching terminal history
-        if term_config.searchable then
-          term_opts.on_open = function(term)
-            vim.bo[term.bufnr].scrollback = 100000
-            local kopts = { buffer = term.bufnr, noremap = true, silent = true }
-            -- Ctrl-q to close (if use_ctrl)
-            if term_config.use_ctrl then
-              vim.keymap.set('t', '<C-q>', [[<C-\><C-n>:q<CR>]], kopts)
-            end
-          end
-        elseif term_config.use_ctrl then
-          -- Add Ctrl-q hotkey for floating chat windows
-          term_opts.on_open = function(term)
+        -- Set up on_open handler for searchable and use_ctrl options
+        term_opts.on_open = function(term)
+          -- searchable = true means buffer is listed (shows in buffer pickers)
+          vim.bo[term.bufnr].buflisted = term_config.searchable or false
+          -- Ctrl-q to close (if use_ctrl)
+          if term_config.use_ctrl then
             local kopts = { buffer = term.bufnr, noremap = true, silent = true }
             vim.keymap.set('t', '<C-q>', [[<C-\><C-n>:q<CR>]], kopts)
           end

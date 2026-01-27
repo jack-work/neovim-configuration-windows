@@ -70,9 +70,8 @@ local function create_term_buffer(name, cmd, searchable)
     vim.bo[buf_id].syntax = ''
     vim.wo.signcolumn = 'no'
     vim.wo.spell = false
-    if searchable then
-      vim.bo[buf_id].scrollback = 100000
-    end
+    -- searchable = true means buffer is listed (shows in buffer pickers)
+    vim.bo[buf_id].buflisted = searchable or false
   end)
 
   return buf_id
