@@ -1,11 +1,11 @@
 -- Terminal plugin initialization
--- Sets up terminals, keymaps, and commands based on declarative config
+-- Generic library that receives ALL config via opts parameter
 
 local M = {}
+local terminals_lib = require('terminal.terminals')
 
-function M.setup()
-  local config = require('terminal.config')
-  local terminals = require('terminal.terminals')
+function M.setup(opts)
+  opts = opts or {}
 
   -- Load toggleterm
   local status, toggleterm = pcall(require, 'toggleterm')
@@ -14,102 +14,117 @@ function M.setup()
     return
   end
 
-  -- Configure shell (Windows/PowerShell)
-  vim.cmd("let &shell = " .. config.shell_config.shell)
-  vim.cmd("let &shellcmdflag = '" .. config.shell_config.shellcmdflag .. "'")
-  vim.cmd("let &shellredir = '" .. config.shell_config.shellredir .. "'")
-  vim.cmd("let &shellpipe = '" .. config.shell_config.shellpipe .. "'")
-  vim.cmd("set shellquote=" .. config.shell_config.shellquote .. " shellxquote=" .. config.shell_config.shellxquote)
+  -- Configure shell if provided
+  if opts.shell then
+    vim.cmd("let &shell = " .. opts.shell.shell)
+    vim.cmd("let &shellcmdflag = '" .. opts.shell.shellcmdflag .. "'")
+    vim.cmd("let &shellredir = '" .. opts.shell.shellredir .. "'")
+    vim.cmd("let &shellpipe = '" .. opts.shell.shellpipe .. "'")
+    vim.cmd("set shellquote=" .. (opts.shell.shellquote or '') .. " shellxquote=" .. (opts.shell.shellxquote or ''))
+  end
 
-  -- Setup toggleterm with base config
-  toggleterm.setup(config.toggleterm_opts)
+  -- Setup toggleterm with provided options
+  if opts.toggleterm then
+    toggleterm.setup(opts.toggleterm)
+  end
 
-  -- Get Terminal class and set it in terminals module
+  -- Get Terminal class and pass to terminals library
   local Terminal = require('toggleterm.terminal').Terminal
-  terminals.set_terminal_class(Terminal)
+  terminals_lib.set_terminal_class(Terminal)
 
-  -- Create terminal instances from config
-  local terminal_instances = {}
+  -- Store toggleterm instances for single-process terminals
+  local toggleterm_instances = {}
 
-  for name, term_config in pairs(config.terminals) do
-    local term_opts = {
-      cmd = term_config.cmd,
-      direction = term_config.direction,
-      close_on_exit = term_config.close_on_exit,
-      start_in_insert = term_config.start_in_insert,
-    }
-
-    -- Add float_opts if specified
-    if term_config.float_opts then
-      term_opts.float_opts = term_config.float_opts
-    end
-
-    -- Add ctrl hotkey support for floating chat windows
-    if term_config.use_ctrl then
-      -- The ctrl hotkey signals that this should behave like a floating chat window
-      -- Add Ctrl-q to close the terminal (like aichat)
-      term_opts.on_open = function(term)
-        local opts = { buffer = term.bufnr, noremap = true, silent = true }
-        -- Ctrl-q in terminal mode closes the window
-        vim.keymap.set('t', '<C-q>', [[<C-\><C-n>:q<CR>]], opts)
-      end
-    end
-
-    terminal_instances[name] = Terminal:new(term_opts)
-  end
-
-  -- Create toggle functions and keymaps for each terminal
-  for name, term_config in pairs(config.terminals) do
-    if term_config.keymap then
-      local toggle_func = function()
-        terminal_instances[name]:toggle()
+  -- Process polymorphic terminals list
+  if opts.terminals then
+    for _, term_config in ipairs(opts.terminals) do
+      if not term_config.name or not term_config.keymap then
+        vim.notify("Terminal config missing required 'name' or 'keymap'", vim.log.levels.WARN)
+        goto continue
       end
 
-      -- Store globally with descriptive name
-      _G['_TOGGLE_' .. name:upper()] = toggle_func
+      local is_multi = term_config.buffers ~= nil
 
-      -- Create keymap
-      vim.keymap.set("n", term_config.keymap, toggle_func, {
-        desc = term_config.desc or ("Toggle " .. name)
-      })
+      if is_multi then
+        -- Multi-process terminal: create keymap that invokes invoke_multi
+        vim.keymap.set("n", term_config.keymap, function()
+          terminals_lib.invoke_multi(term_config)
+        end, {
+          desc = term_config.desc or ("Start " .. term_config.name)
+        })
+      else
+        -- Single-process terminal: create toggleterm instance
+        local term_opts = {
+          cmd = term_config.cmd,
+          direction = term_config.direction or "float",
+          close_on_exit = term_config.close_on_exit ~= false,
+          start_in_insert = term_config.start_in_insert ~= false,
+          display_name = term_config.name,
+        }
+
+        if term_config.float_opts then
+          term_opts.float_opts = term_config.float_opts
+        end
+
+        -- Add Ctrl-q hotkey for floating chat windows
+        if term_config.use_ctrl then
+          term_opts.on_open = function(term)
+            local kopts = { buffer = term.bufnr, noremap = true, silent = true }
+            vim.keymap.set('t', '<C-q>', [[<C-\><C-n>:q<CR>]], kopts)
+          end
+        end
+
+        local instance = Terminal:new(term_opts)
+        toggleterm_instances[term_config.name] = instance
+
+        -- Create keymap
+        vim.keymap.set("n", term_config.keymap, function()
+          if term_config.singleton == false then
+            -- Non-singleton: create new instance each time
+            terminals_lib.invoke_single(term_config, nil)
+          else
+            -- Singleton (default): toggle existing instance
+            instance:toggle()
+          end
+        end, {
+          desc = term_config.desc or ("Toggle " .. term_config.name)
+        })
+
+        -- Store globally for compatibility
+        _G['_TOGGLE_' .. term_config.name:upper()] = function()
+          instance:toggle()
+        end
+      end
+
+      ::continue::
     end
   end
 
-  -- Setup multi-terminal keymaps
-  for name, multi_config in pairs(config.multi_terminals) do
-    if multi_config.keymap then
-      vim.keymap.set("n", multi_config.keymap, function()
-        terminals.start_multi_terminals(multi_config)
-      end, {
-        desc = multi_config.desc or ("Start " .. name .. " terminals")
-      })
+  -- Process custom keymaps if provided
+  if opts.custom_keymaps then
+    for _, keymap_config in ipairs(opts.custom_keymaps) do
+      vim.keymap.set(
+        keymap_config.mode or "n",
+        keymap_config.keymap,
+        keymap_config.action,
+        { desc = keymap_config.desc }
+      )
     end
   end
 
-  -- Setup custom keymaps
-  for _, keymap_config in ipairs(config.custom_keymaps) do
-    vim.keymap.set(
-      keymap_config.mode,
-      keymap_config.keymap,
-      keymap_config.action,
-      { desc = keymap_config.desc }
-    )
+  -- Override :terminal command if requested
+  if opts.override_terminal ~= false then
+    vim.api.nvim_create_user_command('Terminal', terminals_lib.custom_terminal, {
+      nargs = 0,
+      force = true
+    })
+    vim.cmd('cabbrev terminal Terminal')
+    vim.cmd('cabbrev term Terminal')
   end
 
-  -- Override the :terminal command
-  vim.api.nvim_create_user_command('Terminal', terminals.custom_terminal, {
-    nargs = 0,
-    force = true
-  })
-
-  -- Create abbreviation to intercept :terminal
-  vim.cmd('cabbrev terminal Terminal')
-  vim.cmd('cabbrev term Terminal')
-
-  -- Expose terminals module globally for backward compatibility
-  _G.create_named_terminal = terminals.create_named_terminal
-  _G.toggle_named_terminal = terminals.toggle_named_terminal
-  _G.start_term = terminals.start_term
+  -- Expose for backward compatibility
+  _G.create_named_terminal = terminals_lib.create_named_terminal
+  _G.toggle_named_terminal = terminals_lib.toggle_named_terminal
 end
 
 return M

@@ -43,16 +43,16 @@ opts = {
 ## Steps
 
 ### 1. Write this plan to file
-Status: IN PROGRESS
+Status: DONE
 
 ### 2. YIELD: User approval of plan
-Status: PENDING
+Status: DONE (approved)
 
 ### 3. Refactor terminal/init.lua
 - Remove all hardcoded config
 - Accept opts parameter
 - Setup toggleterm with opts.toggleterm
-Status: PENDING
+Status: DONE
 
 ### 4. Refactor terminal/terminals.lua
 - Remove config.lua dependency
@@ -60,14 +60,14 @@ Status: PENDING
 - Implement buffer ID tracking collection
 - Implement singleton vs numbered instance logic
 - Implement buffer existence check and recreation
-Status: PENDING
+Status: DONE
 
 ### 5. Delete terminal/config.lua
 - All config moves to term.lua
-Status: PENDING
+Status: DONE
 
 ### 6. YIELD: User approval of library changes
-Status: PENDING
+Status: PENDING (current)
 
 ### 7. Refactor term.lua (plugin spec)
 - Add dependencies = {"akinsho/toggleterm.nvim"}
