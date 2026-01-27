@@ -52,7 +52,8 @@ local function register_buffer(prefix, sub_name, buf_id, config)
 end
 
 -- Create a terminal buffer with environment variables
-local function create_term_buffer(name, cmd)
+-- searchable: if true, set high scrollback for searching
+local function create_term_buffer(name, cmd, searchable)
   vim.cmd('enew')
 
   vim.fn.termopen({ 'pwsh', '-NoExit', '-Command', cmd }, {
@@ -69,6 +70,9 @@ local function create_term_buffer(name, cmd)
     vim.bo[buf_id].syntax = ''
     vim.wo.signcolumn = 'no'
     vim.wo.spell = false
+    if searchable then
+      vim.bo[buf_id].scrollback = 100000
+    end
   end)
 
   return buf_id
@@ -143,8 +147,9 @@ function M.invoke_multi(config)
         main_buf = existing_buf
       end
     else
-      -- Create new buffer
-      local buf_id = create_term_buffer(buf_name, buf_cfg.cmd)
+      -- Create new buffer (inherit searchable from parent config or buffer config)
+      local is_searchable = buf_cfg.searchable or config.searchable
+      local buf_id = create_term_buffer(buf_name, buf_cfg.cmd, is_searchable)
       register_buffer(prefix, sub_name, buf_id, buf_cfg)
 
       if buf_cfg.main then

@@ -101,6 +101,7 @@ return {
           desc = "Clyde (Claude skip permissions)",
           singleton = true,
           use_ctrl = true,
+          searchable = true,  -- high scrollback, easy to search
           direction = "float",
           float_opts = {
             border = "curved",
@@ -115,6 +116,7 @@ return {
           keymap = "<leader>clod",
           desc = "Start dev terminals",
           singleton = true,  -- reuse existing group
+          searchable = true,  -- high scrollback for all buffers
           buffers = {
             { name = "copilot", cmd = "npx copilot-api@latest start", main = false, singleton = true },
             { name = "ccr", cmd = "ccr start", main = false, singleton = true },
