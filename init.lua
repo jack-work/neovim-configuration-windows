@@ -241,6 +241,25 @@ vim.keymap.set('n', '[d', function()
   vim.diagnostic.goto_prev()
 end, { desc = 'Go to previous diagnostic (prioritized)' })
 
+-- GENERATE A GUID AND PUT IT IN THE CLIPBOARD
+vim.api.nvim_create_user_command('GenGuid', function()
+  local template = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'
+  local guid = template:gsub('[xy]', function(c)
+    local v = (c == 'x') and math.random(0, 0xf) or math.random(8, 0xb)
+    return string.format('%x', v)
+  end)
+
+  vim.fn.setreg('"', guid) -- default register
+  vim.fn.setreg('+', guid) -- system clipboard
+  vim.fn.setreg('*', guid) -- primary selection (X11)
+
+  print('GUID copied: ' .. guid)
+end, {})
+vim.keymap.set("n", "<leader>guid", ":GenGuid<CR>")
+
+-- Initialize random seed (put this outside the command)
+math.randomseed(os.time() + os.clock() * 1000)
+
 -- Runs the nearest Get-Token.ps1 ancestor script
 -- Also contains an implementation of updating file buffer that can probably be generalized.
 vim.keymap.set("n", "<leader>Tt", function()
