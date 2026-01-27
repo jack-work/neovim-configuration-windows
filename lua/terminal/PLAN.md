@@ -74,10 +74,10 @@ Status: PENDING (current)
 - Move ALL terminal definitions to opts table
 - Use polymorphic list format
 - config function passes opts to terminal.setup()
-Status: PENDING
+Status: DONE
 
 ### 8. YIELD: User approval of final config
-Status: PENDING
+Status: PENDING (current)
 
 ### 9. Test and commit
 Status: PENDING
