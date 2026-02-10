@@ -1,4 +1,6 @@
 ---@diagnostic disable: undefined-field, undefined-global: vim
+vim.loader.enable()
+
 -- Bootstrap lazy.nvim
 vim.g.mapleader = " ";
 vim.g.maplocalleader = " ";
