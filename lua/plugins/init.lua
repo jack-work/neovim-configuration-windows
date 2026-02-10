@@ -38,9 +38,7 @@ return {
     -- 'lewis6991/gitsigns.nvim', -- Git signs in gutter
     keys = {
       { "<leader>gs", ":Git<CR>",            desc = "Git status" },
-      { "<leader>gb", ":Git blame<CR>",      desc = "Git blame" },
       { "<leader>gd", ":Gdiff<CR>",          desc = "Git diff" },
-      { "<leader>gl", ":Git log<CR>",        desc = "Git log" },
       { "<leader>rb", ":Git rebase -i HEAD~" },
     },
   },
