@@ -139,11 +139,11 @@ return {
         {
           mode = "n",
           keymap = "<leader>tm",
-          desc = "Open terminal with profile",
+          desc = "Open terminal with profile loaded",
           action = function()
             require('terminal.terminals').create_named_terminal(
               "term_" .. os.date("%Y%m%d-%H%M%S"),
-              ". prof",
+              "pwsh -NoLogo",
               "current"
             )
           end
