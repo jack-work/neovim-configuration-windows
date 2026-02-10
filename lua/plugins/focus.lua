@@ -2,7 +2,7 @@ return {
   "beauwilliams/focus.nvim",
   config = function()
     require("focus").setup({
-      enable = true,
+      enable = false,
       commands = true,
       autoresize = {
         enable = true,

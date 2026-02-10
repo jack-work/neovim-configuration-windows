@@ -164,6 +164,8 @@ vim.keymap.set('t', '<esc><esc>', '<C-\\><C-n>', { desc = 'Exit terminal mode' }
 -- :let @+ = expand('%:p')
 vim.keymap.set({ 'n', 'v' }, '<leader>yp', ':let @+ = expand(\'%:p\')<CR>',
   { desc = 'yank current file path to clipboard' })
+vim.keymap.set('n', '<leader>op', ':%y+<CR>',
+  { desc = 'copy entire buffer to system clipboard' })
 vim.keymap.set('n', '<leader><leader>', ':noh<CR>', { silent = true, desc = 'Clear search highlighting' })
 vim.keymap.set('n', '<leader>dq', ':lua vim.diagnostic.setqflist()<CR>',
   { desc = 'open diagnostics in a buffer so they can be searched' })
