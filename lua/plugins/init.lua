@@ -44,8 +44,4 @@ return {
       { "<leader>rb", ":Git rebase -i HEAD~" },
     },
   },
-  {
-    "danymat/neogen",
-    config = true,
-  }
 }
