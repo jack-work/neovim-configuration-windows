@@ -62,5 +62,8 @@ return {
     end },
     { "<leader>fg", function() require("fzf-lua").grep() end },
     { "<leader>fb", function() require("fzf-lua").buffers() end },
+    { "<leader>fl", function() require("fzf-lua").lines() end, desc = "Search all open buffers" },
+    { "<leader>f/", function() require("fzf-lua").blines() end, desc = "Search current buffer" },
+    { "<leader>fk", function() require("fzf-lua").keymaps() end, desc = "Search keymaps" },
   },
 }
