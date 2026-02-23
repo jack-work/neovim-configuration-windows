@@ -17,7 +17,12 @@ vim.opt.rtp:prepend(lazypath)
 -- Plugin setup
 require("lazy").setup("plugins")
 
-require('mason').setup()
+require('mason').setup({
+  registries = {
+    "github:mason-org/mason-registry",
+    "github:Crashdummyy/mason-registry",
+  },
+})
 require("mason-lspconfig").setup({
   ensure_installed = { "powershell_es" },
   handlers = {
@@ -28,6 +33,8 @@ require("mason-lspconfig").setup({
     -- typescript-tools.nvim handles TypeScript — skip these to avoid duplicates
     ts_ls = function() end,
     tsgo = function() end,
+    -- roslyn.nvim handles C# — skip to avoid duplicate LSP client
+    roslyn = function() end,
   },
 })
 
