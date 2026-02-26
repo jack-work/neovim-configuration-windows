@@ -42,6 +42,13 @@ return {
   keys = {
     { "<leader>-", ":Oil<CR>", desc = "Open parent directory" },
     {
+      "<leader>dev",
+      function()
+        require("oil").open(vim.env.userprofile .. '\\dev')
+      end,
+      desc = "Open src folder"
+    },
+    {
       "<leader>src",
       function()
         require("oil").open(vim.env.userprofile .. '\\src')
@@ -69,9 +76,23 @@ return {
     {
       '<leader>op',
       function()
-        local oil = require("oil");
-        vim.fn.setreg("*", oil.get_current_dir() .. oil.get_cursor_entry().name)
-      end
+        local oil_ok, oil = pcall(require, "oil")
+        if oil_ok and oil.get_current_dir() then
+          -- In an Oil buffer: copy the full path of the entry under cursor
+          local entry = oil.get_cursor_entry()
+          if entry then
+            local path = oil.get_current_dir() .. entry.name
+            vim.fn.setreg("+", path)
+            vim.notify("Copied: " .. path)
+          end
+        else
+          -- Not in Oil: copy the current buffer's file path
+          local path = vim.fn.expand("%:p")
+          vim.fn.setreg("+", path)
+          vim.notify("Copied: " .. path)
+        end
+      end,
+      desc = "Copy path (Oil entry or current buffer)",
     },
     {
       '<leader>home',
