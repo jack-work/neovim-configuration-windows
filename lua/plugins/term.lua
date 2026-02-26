@@ -139,13 +139,18 @@ return {
         {
           mode = "n",
           keymap = "<leader>tm",
-          desc = "Open terminal with profile loaded",
+          desc = "Open terminal here (oil-aware)",
           action = function()
-            require('terminal.terminals').create_named_terminal(
-              "term_" .. os.date("%Y%m%d-%H%M%S"),
-              "pwsh -NoLogo",
-              "current"
-            )
+            local ok, oil = pcall(require, 'oil')
+            local dir
+            if ok and oil.get_current_dir then
+              dir = oil.get_current_dir()
+            else
+              dir = vim.fn.expand('%:p:h')
+            end
+            vim.cmd.enew()
+            vim.fn.termopen('pwsh -NoLogo', { cwd = dir })
+            vim.cmd.startinsert()
           end
         },
       },
