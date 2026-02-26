@@ -123,38 +123,58 @@ local function parse_branch(input)
   return remote_ref, local_name, dir_name
 end
 
---- Core worktree creation with fetch-on-failure fallback.
+--- Run a git command asynchronously under the bare root.
+--- Calls back on the main loop via vim.schedule.
+---@param bare_root string
+---@param args string[]        args after `git`
+---@param on_done fun(ok: boolean, output: string)
+local function git_async(bare_root, args, on_done)
+  local cmd = { 'git', '-C', bare_root }
+  vim.list_extend(cmd, args)
+  vim.system(cmd, { text = true }, function(result)
+    vim.schedule(function()
+      local output = vim.trim((result.stdout or '') .. (result.stderr or ''))
+      on_done(result.code == 0, output)
+    end)
+  end)
+end
+
+--- Core worktree creation with fetch-on-failure fallback (async).
+--- The UI is not blocked during worktree add or fetch.
 ---@param bare_root string
 ---@param args string[]        args after `git worktree add`
 ---@param fetch_branch string  branch name to fetch from origin on failure
 ---@param on_success fun()
 local function add_worktree(bare_root, args, fetch_branch, on_success)
-  local cmd = { 'git', '-C', bare_root, 'worktree', 'add' }
-  vim.list_extend(cmd, args)
+  vim.notify('tree-bear: creating worktree...', vim.log.levels.INFO)
 
-  local out = vim.fn.system(cmd)
-  if vim.v.shell_error == 0 then
-    on_success()
-    return
-  end
+  git_async(bare_root, { 'worktree', 'add', unpack(args) }, function(ok, out)
+    if ok then
+      on_success()
+      return
+    end
 
-  -- Worktree add failed — try fetching the branch from origin
-  vim.fn.system({ 'git', '-C', bare_root, 'fetch', 'origin', fetch_branch })
-  if vim.v.shell_error ~= 0 then
-    vim.notify(
-      'tree-bear: branch not found locally or on origin: ' .. fetch_branch .. '\n' .. vim.trim(out),
-      vim.log.levels.ERROR
-    )
-    return
-  end
+    -- Worktree add failed — try fetching the branch from origin
+    vim.notify('tree-bear: fetching ' .. fetch_branch .. ' from origin...', vim.log.levels.INFO)
+    git_async(bare_root, { 'fetch', 'origin', fetch_branch }, function(fetch_ok, fetch_out)
+      if not fetch_ok then
+        vim.notify(
+          'tree-bear: branch not found locally or on origin: ' .. fetch_branch .. '\n' .. out,
+          vim.log.levels.ERROR
+        )
+        return
+      end
 
-  local out2 = vim.fn.system(cmd)
-  if vim.v.shell_error ~= 0 then
-    vim.notify('tree-bear: worktree add failed after fetch:\n' .. vim.trim(out2), vim.log.levels.ERROR)
-    return
-  end
-
-  on_success()
+      -- Retry worktree add after fetch
+      git_async(bare_root, { 'worktree', 'add', unpack(args) }, function(ok2, out2)
+        if not ok2 then
+          vim.notify('tree-bear: worktree add failed after fetch:\n' .. out2, vim.log.levels.ERROR)
+          return
+        end
+        on_success()
+      end)
+    end)
+  end)
 end
 
 --- Pick a worktree via fzf-lua and open lazygit in it.
@@ -212,8 +232,7 @@ function M.track_worktree()
     end
 
     add_worktree(bare_root, { '--track', '-b', local_name, wt_path, remote_ref }, local_name, function()
-      vim.notify('tree-bear: created worktree ' .. dir_name .. ' tracking ' .. remote_ref, vim.log.levels.INFO)
-      Snacks.lazygit({ cwd = wt_path })
+      vim.notify('tree-bear: worktree ready — ' .. dir_name .. ' tracking ' .. remote_ref, vim.log.levels.INFO)
     end)
   end)
 end
@@ -244,8 +263,7 @@ function M.new_worktree()
       end
 
       add_worktree(bare_root, { '--track', '-b', new_branch, wt_path, remote_ref }, base_local, function()
-        vim.notify('tree-bear: created worktree ' .. dir_name .. ' on branch ' .. new_branch, vim.log.levels.INFO)
-        Snacks.lazygit({ cwd = wt_path })
+        vim.notify('tree-bear: worktree ready — ' .. dir_name .. ' on branch ' .. new_branch, vim.log.levels.INFO)
       end)
     end)
   end)
