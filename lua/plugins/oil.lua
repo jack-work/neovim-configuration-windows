@@ -1,6 +1,12 @@
 return {
   'stevearc/oil.nvim',
   opts = {
+    keymaps = {
+      ["<C-h>"] = false,
+      ["<C-j>"] = false,
+      ["<C-k>"] = false,
+      ["<C-l>"] = false,
+    },
     columns = {
       "icon",
       "permissions",
