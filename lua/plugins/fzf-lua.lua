@@ -60,8 +60,12 @@ return {
         end)
       end)
     end },
-    { "<leader>fg", function() require("fzf-lua").grep() end },
-    { "<leader>fb", function() require("fzf-lua").buffers() end },
+    { "<leader>fg", function()
+      require("fzf-lua").grep({
+        rg_opts = "--column --line-number --no-heading --color=always --smart-case --max-columns=4096 --pcre2 -e",
+      })
+    end },
+    -- <leader>fb is handled by gym.nvim (gym-scoped buffer picker)
     { "<leader>fl", function() require("fzf-lua").lines() end, desc = "Search all open buffers" },
     { "<leader>f/", function() require("fzf-lua").blines() end, desc = "Search current buffer" },
     { "<leader>fk", function() require("fzf-lua").keymaps() end, desc = "Search keymaps" },
