@@ -15,7 +15,9 @@ end
 vim.opt.rtp:prepend(lazypath)
 
 -- Plugin setup
-require("lazy").setup("plugins")
+require("lazy").setup("plugins", {
+  dev = { path = vim.fn.expand("~/dev") },
+})
 
 require('mason').setup({
   registries = {
@@ -25,25 +27,12 @@ require('mason').setup({
 })
 require("mason-lspconfig").setup({
   ensure_installed = { "powershell_es" },
-  handlers = {
-    -- Default: auto-setup any Mason-installed server via lspconfig
-    function(server_name)
-      require('lspconfig')[server_name].setup({})
-    end,
-    -- typescript-tools.nvim handles TypeScript — skip these to avoid duplicates
-    ts_ls = function() end,
-    tsgo = function() end,
-    -- roslyn.nvim handles C# — skip to avoid duplicate LSP client
-    roslyn = function() end,
-    omnisharp = function() end,
+  -- automatic_enable (default: true) calls vim.lsp.enable() for all
+  -- Mason-installed servers. Exclude servers managed by dedicated plugins.
+  automatic_enable = {
+    exclude = { "roslyn", "ts_ls" },
   },
 })
-
-require('lspconfig').powershell_es.setup {
-  bundle_path = vim.fn.stdpath "data" .. "/mason/packages/powershell-editor-services",
-}
-
-require('lspconfig').lua_ls.setup {}
 
 require('cmp').setup({
   snippet = {
@@ -130,6 +119,8 @@ vim.keymap.set('n', 'gl', vim.diagnostic.open_float)
 vim.keymap.set({ 'n', 'v' }, '<leader>.', vim.lsp.buf.code_action)
 vim.keymap.set('n', '<leader>ci', '<cmd>FzfLua lsp_incoming_calls<CR>', { desc = 'Incoming calls' })
 vim.keymap.set('n', '<leader>co', '<cmd>FzfLua lsp_outgoing_calls<CR>', { desc = 'Outgoing calls' })
+vim.keymap.set('n', '<leader>ds', '<cmd>FzfLua lsp_document_symbols<CR>', { desc = 'Document symbols' })
+vim.keymap.set('n', '<leader>ws', '<cmd>FzfLua lsp_workspace_symbols<CR>', { desc = 'Workspace symbols' })
 
 vim.wo.number = true
 vim.wo.relativenumber = true
@@ -142,7 +133,8 @@ vim.api.nvim_create_autocmd("FileType", {
   end,
 })
 vim.o.shell = "pwsh.exe"
-vim.o.shellcmdflag = '-NoLogo -NoProfile -ExecutionPolicy RemoteSigned -Command [Console]::InputEncoding=[Console]::OutputEncoding=[System.Text.Encoding]::UTF8;'
+vim.o.shellcmdflag =
+'-NoLogo -NoProfile -ExecutionPolicy RemoteSigned -Command [Console]::InputEncoding=[Console]::OutputEncoding=[System.Text.Encoding]::UTF8;'
 vim.o.shellredir = '2>&1 | Out-File -Encoding UTF8 %s; exit $LastExitCode'
 vim.o.shellpipe = '2>&1 | Out-File -Encoding UTF8 %s; exit $LastExitCode'
 vim.o.shellquote = ''

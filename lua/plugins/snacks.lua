@@ -7,7 +7,12 @@ return {
     animate = { enabled = true},
     bigfile = { enabled = true },
     bufdelete = { enabled = true },
-    dashboard = { enabled = true },
+    dashboard = {
+      enabled = true,
+      preset = {
+        header = table.concat(vim.fn.readfile(vim.fn.stdpath("config") .. "/guitar"), "\n"),
+      },
+    },
     dim = { enabled = true },
     git = { enabled = true },
     gitbrowse = { enabled = true },

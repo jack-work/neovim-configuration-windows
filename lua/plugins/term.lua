@@ -3,7 +3,7 @@
 
 return {
   "akinsho/toggleterm.nvim",
-  dependencies = {},  -- toggleterm is the main plugin, terminal/ is local
+  dependencies = {}, -- toggleterm is the main plugin, terminal/ is local
 
   config = function()
     require('terminal').setup({
@@ -11,7 +11,8 @@ return {
       -- Shell configuration (Windows/PowerShell)
       shell = {
         shell = "has('win32') ? 'powershell' : 'pwsh'",
-        shellcmdflag = '-NoLogo -NoProfile -ExecutionPolicy RemoteSigned -Command [Console]::InputEncoding=[Console]::OutputEncoding=[System.Text.Encoding]::UTF8;',
+        shellcmdflag =
+        '-NoLogo -NoProfile -ExecutionPolicy RemoteSigned -Command [Console]::InputEncoding=[Console]::OutputEncoding=[System.Text.Encoding]::UTF8;',
         shellredir = '2>&1 | Out-File -Encoding UTF8 %s; exit $LastExitCode',
         shellpipe = '2>&1 | Out-File -Encoding UTF8 %s; exit $LastExitCode',
         shellquote = '',
@@ -46,6 +47,19 @@ return {
       -- Single-process: has cmd field
       -- Multi-process: has buffers field
       terminals = {
+        {
+          name = "jut",
+          keymap = "<leader>jut",
+          cmd = "jut",
+          desc = "Parse jwt",
+          direction = "float",
+          close_on_exit = false,
+          float_opts = {
+            border = "curved",
+            width = 100,
+            height = 60,
+          },
+        },
         -- Node CLI (yipyap)
         {
           name = "nodecli",
@@ -101,7 +115,7 @@ return {
           desc = "Clyde (Claude skip permissions)",
           singleton = true,
           use_ctrl = true,
-          searchable = true,  -- high scrollback, easy to search
+          searchable = true, -- high scrollback, easy to search
           direction = "float",
           float_opts = {
             border = "curved",
@@ -116,11 +130,11 @@ return {
           keymap = "<leader>clod",
           desc = "Start dev terminals",
           singleton = true,  -- reuse existing group
-          searchable = true,  -- high scrollback for all buffers
+          searchable = true, -- high scrollback for all buffers
           buffers = {
             { name = "copilot", cmd = "npx copilot-api@latest start", main = false, singleton = true },
-            { name = "ccr", cmd = "ccr start", main = false, singleton = true },
-            { name = "claude", cmd = "ccr code", main = true, singleton = true },
+            { name = "ccr",     cmd = "ccr start",                    main = false, singleton = true },
+            { name = "claude",  cmd = "ccr code",                     main = true,  singleton = true },
           }
         },
       },
